@@ -1,0 +1,57 @@
+/* Google Font (optional but recommended) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Root */
+:root {
+  --bg-main: #020617;
+  --bg-card: #0f172a;
+  --border: #1e293b;
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5f5;
+  --accent: #6366f1;
+}
+
+/* Body */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: var(--accent);
+}
+
+/* Buttons reset */
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Inputs */
+input, textarea {
+  font-family: inherit;
+  border: none;
+  outline: none;
+}
+
+/* Scrollbar (global) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}

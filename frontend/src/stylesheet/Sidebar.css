@@ -1,0 +1,51 @@
+.sidebar {
+  width: 180px; /* slim */
+  background: #020617; /* blend with app */
+  padding: 20px 10px;
+  height: 100vh;
+  border-right: 1px solid #1e293b;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #cbd5f5;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.sidebar-item:hover {
+  background: #1e293b;
+  color: #fff;
+  transform: translateX(3px);
+  box-shadow: 0 0 8px rgba(99,102,241,0.25);
+}
+
+/* Icon color */
+.sidebar-item svg {
+  color: #6366f1;
+  transition: 0.2s;
+}
+
+/* Active feel (optional future use) */
+.sidebar-item.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+}
+
+.sidebar-item.active svg {
+  color: #fff;
+}

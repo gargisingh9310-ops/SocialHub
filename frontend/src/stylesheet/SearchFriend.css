@@ -1,0 +1,139 @@
+.search-friends-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-friends-box {
+  width: 100%;
+  max-width: 700px;
+  background: #111827;
+  padding: 20px;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1f2937;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.search-icon {
+  color: #9ca3af;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: white;
+  outline: none;
+  font-size: 14px;
+}
+
+.search-bar button {
+  background: #6366f1;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-bar button:hover {
+  background: #4f46e5;
+}
+
+/* RESULTS */
+.results {
+  margin-top: 15px;
+}
+
+.result-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1f2937;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  transition: 0.2s;
+}
+
+.result-card:hover {
+  transform: scale(1.02);
+}
+
+/* AVATAR */
+.result-avatar img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.avatar-placeholder {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* INFO */
+.result-info {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.result-info h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.result-info p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.result-info span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* BUTTONS */
+.result-action button {
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-add {
+  background: #22c55e;
+  color: white;
+}
+
+.btn-remove {
+  background: #ef4444;
+  color: white;
+}
+
+/* STATES */
+.no-results {
+  text-align: center;
+  color: #9ca3af;
+}
+
+.error {
+  color: #ef4444;
+}

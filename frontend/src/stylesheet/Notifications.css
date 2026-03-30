@@ -1,0 +1,84 @@
+.notifications-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+.notifications-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  background: #6366f1;
+  padding: 4px 8px;
+  border-radius: 10px;
+}
+
+.notifications-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 14px;
+  transition: 0.2s;
+}
+
+.notification:hover {
+  background: #1e293b;
+}
+
+.notification.unread {
+  border-left: 3px solid #6366f1;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  background: #020617;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.text p {
+  font-size: 14px;
+}
+
+.text span {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.actions button {
+  background: #020617;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.actions button:hover {
+  background: #6366f1;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 40px;
+  color: #94a3b8;
+}
