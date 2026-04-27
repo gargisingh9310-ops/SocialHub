@@ -17,11 +17,11 @@
   const httpServer = createServer(app)
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5173',
+      origin: 'http://localhost:5174',
       credentials: true
     }
   })
-
+ 
   const onlineUsers = new Map()
 
   io.on('connection', (socket) => {
@@ -53,9 +53,9 @@
     socket.on('stop_typing', (data) => {
       const { receiverId } = data
       const receiverSocketId = onlineUsers.get(receiverId)
-      if (receiverSocketId) {
+      if (receiverSocketId) { 
         io.to(receiverSocketId).emit('user_stop_typing')
-      }
+      } 
     })
 
     socket.on('disconnect', () => {
@@ -74,7 +74,7 @@
   })
 
   app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:5174',
     credentials: true
   }))
   app.use(cookieParser())
@@ -86,10 +86,10 @@
   app.use("/notifications", notificationRouter)
 
   app.set('io', io)
-
+ 
   verifyTransport()
   connectToDb()
 
   httpServer.listen(process.env.PORT, () => {
       console.log(`✓ Server running on port ${process.env.PORT}`)
-  })
+  }) 

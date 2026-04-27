@@ -18,7 +18,7 @@ export default function Feed() {
 
   const fetchFeed = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/posts/feed/${user?.userId}`)
+      const res = await fetch(`http://localhost:4000/posts/feed/${user?.userId}`)
       const data = await res.json()
       if (res.ok) {
         setPosts(data.posts)
@@ -32,7 +32,7 @@ export default function Feed() {
 
   const handleLike = async (postId) => {
     try {
-      const res = await fetch('http://localhost:5000/posts/like', {
+      const res = await fetch('http://localhost:4000/posts/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: user?.userId })
@@ -48,7 +48,7 @@ export default function Feed() {
 
   const handleComment = async (postId, text) => {
     try {
-      const res = await fetch('http://localhost:5000/posts/comment', {
+      const res = await fetch('http://localhost:4000/posts/comment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,7 +69,7 @@ export default function Feed() {
 
   const handleDelete = async (postId) => {
     try {
-      const res = await fetch('http://localhost:5000/posts/delete', {
+      const res = await fetch('http://localhost:4000/posts/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: user?.userId })

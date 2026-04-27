@@ -64,7 +64,7 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/users/register', {
+      const res = await fetch('http://localhost:4000/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -138,5 +138,4 @@ export default function Register() {
     </div>
   )
 }
-
 

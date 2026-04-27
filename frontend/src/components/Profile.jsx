@@ -18,7 +18,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/users/profile/${user?.userId}`)
+      const res = await fetch(`http://localhost:4000/users/profile/${user?.userId}`)
       const data = await res.json()
 
       if (res.ok) setProfile(data)
