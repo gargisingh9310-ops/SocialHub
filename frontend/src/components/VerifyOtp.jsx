@@ -28,7 +28,7 @@ export default function VerifyOtp() {
     setError('')
 
     try {
-      const res = await fetch('http://localhost:4000/users/verify-otp', {
+      const res = await fetch('https://social-hub-sqid.onrender.com/users/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, otp })
@@ -53,7 +53,7 @@ export default function VerifyOtp() {
 
   const handleResend = async () => {
     try {
-      const res = await fetch('http://localhost:4000/users/resend-otp', {
+      const res = await fetch('https://social-hub-sqid.onrender.com/users/resend-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })

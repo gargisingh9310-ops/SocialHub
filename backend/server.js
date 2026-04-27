@@ -17,7 +17,7 @@
   const httpServer = createServer(app)
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5174',
+      origin: 'https://https://social-hub-sqid.onrender.com',
       credentials: true
     }
   })
@@ -74,7 +74,7 @@
   })
 
   app.use(cors({
-    origin: 'http://localhost:5174',
+    origin: 'https://https://social-hub-sqid.onrender.com',
     credentials: true
   }))
   app.use(cookieParser())

@@ -47,7 +47,7 @@ export default function CreatePost({ onPostCreate }) {
         .map(tag => tag.trim().replace('#', ''))
         .filter(tag => tag)
 
-      const res = await fetch('http://localhost:4000/posts/create', {
+      const res = await fetch('https://social-hub-sqid.onrender.com/posts/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
