@@ -33,7 +33,7 @@ export default function FriendsList() {
 
   const handleRemoveFriend = async (friendId) => {
     try {
-      const res = await fetch('http://localhost:4000/users/remove-friend', {
+      const res = await fetch('/users/remove-friend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.userId, friendId })

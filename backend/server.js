@@ -18,7 +18,7 @@ import dashboardRouter from "./routers/dashboardRouter.js"
   const httpServer = createServer(app)
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5173',
+      origin: 'http://localhost:5174',
       credentials: true
     }
   })
@@ -75,7 +75,7 @@ import dashboardRouter from "./routers/dashboardRouter.js"
   })
 
   app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:5174',
     credentials: true
   }))
   app.use(cookieParser())
