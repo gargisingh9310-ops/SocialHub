@@ -10,6 +10,7 @@
   import notificationRouter from "./routers/notificationRouter.js"
   import cookieParser from "cookie-parser"
   import { verifyTransport } from "./services/otpservice.js"
+import dashboardRouter from "./routers/dashboardRouter.js"
 
   dotenv.config()
 
@@ -17,7 +18,7 @@
   const httpServer = createServer(app)
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5174',
+      origin: 'http://localhost:5173',
       credentials: true
     }
   })
@@ -74,7 +75,7 @@
   })
 
   app.use(cors({
-    origin: 'http://localhost:5174',
+    origin: 'http://localhost:5173',
     credentials: true
   }))
   app.use(cookieParser())
@@ -84,6 +85,7 @@
   app.use("/posts", postRouter)
   app.use("/messages", messageRouter)
   app.use("/notifications", notificationRouter)
+  app.use("/api/dashboard", dashboardRouter);
 
   app.set('io', io)
  
