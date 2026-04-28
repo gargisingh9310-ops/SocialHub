@@ -17,7 +17,7 @@
   const httpServer = createServer(app)
   const io = new Server(httpServer, {
     cors: {
-      origin: 'https://https://social-hub-sqid.onrender.com',
+      origin: 'https://social-hub-sqid.onrender.com',
       credentials: true
     }
   })
@@ -74,7 +74,7 @@
   })
 
   app.use(cors({
-    origin: 'https://https://social-hub-sqid.onrender.com',
+    origin: 'https://social-hub-sqid.onrender.com',
     credentials: true
   }))
   app.use(cookieParser())
@@ -92,4 +92,4 @@
 
   httpServer.listen(process.env.PORT, () => {
       console.log(`✓ Server running on port ${process.env.PORT}`)
-  }) 
+  })  
