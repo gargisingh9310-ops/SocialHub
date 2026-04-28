@@ -15,7 +15,7 @@ export default function Notifications() {
 
   const fetchNotifications = async () => {
     try {
-      const res = await fetch(`https://social-hub-sqid.onrender.com/notifications/${user?.userId}`)
+      const res = await fetch(`http://localhost:4000/notifications/${user?.userId}`)
       const data = await res.json()
       if (res.ok) {
         setNotifications(data.notifications)
@@ -29,7 +29,7 @@ export default function Notifications() {
 
   const fetchUnreadCount = async () => {
     try {
-      const res = await fetch(`https://social-hub-sqid.onrender.com/notifications/unread/${user?.userId}`)
+      const res = await fetch(`http://localhost:4000/notifications/unread/${user?.userId}`)
       const data = await res.json()
       if (res.ok) {
         setUnreadCount(data.unreadCount)
@@ -41,7 +41,7 @@ export default function Notifications() {
 
   const handleMarkAsRead = async (notificationId) => {
     try {
-      const res = await fetch('https://social-hub-sqid.onrender.com/notifications/mark-read', {
+      const res = await fetch('http://localhost:4000/notifications/mark-read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationId })
@@ -58,7 +58,7 @@ export default function Notifications() {
 
   const handleDelete = async (notificationId) => {
     try {
-      const res = await fetch('https://social-hub-sqid.onrender.com/notifications/delete', {
+      const res = await fetch('http://localhost:4000/notifications/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationId })
