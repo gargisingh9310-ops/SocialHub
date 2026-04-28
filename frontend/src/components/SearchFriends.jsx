@@ -17,7 +17,7 @@ export default function SearchFriends() {
 
   const fetchFriends = async () => {
     try {
-      const res = await fetch(`https://social-hub-sqid.onrender.com/api/users/friends/${user?.userId}`)
+      const res = await fetch(`http://localhost:4000/users/friends/${user?.userId}`)
       const data = await res.json()
       if (res.ok) {
         setFriends(data.friends.map(f => f._id))
@@ -33,7 +33,7 @@ export default function SearchFriends() {
     setError('')
 
     try {
-      const res = await fetch(`https://social-hub-sqid.onrender.com/api/users/search-friends?query=${search}&userId=${user?.userId}`)
+      const res = await fetch(`http://localhost:4000/users/search-friends?query=${search}&userId=${user?.userId}`)
       const data = await res.json()
 
       if (res.ok) {
@@ -50,7 +50,7 @@ export default function SearchFriends() {
 
   const handleAddFriend = async (friendId) => {
     try {
-      const res = await fetch('https://social-hub-sqid.onrender.com/api/users/add-friend', {
+      const res = await fetch('http://localhost:4000/users/add-friend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.userId, friendId })
@@ -66,7 +66,7 @@ export default function SearchFriends() {
 
   const handleRemoveFriend = async (friendId) => {
     try {
-      const res = await fetch('https://social-hub-sqid.onrender.com/api/users/remove-friend', {
+      const res = await fetch('http://localhost:4000/users/remove-friend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.userId, friendId })
