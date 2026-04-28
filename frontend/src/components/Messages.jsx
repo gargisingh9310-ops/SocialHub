@@ -22,7 +22,7 @@ export default function Messages() {
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
-    socket = io('http://localhost:4000')
+    socket = io('https://social-hub-sqid.onrender.com/api')
     socket.emit('user_connected', user?.userId)
 
     socket.on('online_users', setOnlineUsers)
@@ -49,19 +49,19 @@ export default function Messages() {
   }, [messages])
 
   const fetchConversations = async () => {
-    const res = await fetch(`http://localhost:4000/messages/conversations/${user?.userId}`)
+    const res = await fetch(`https://social-hub-sqid.onrender.com/api/messages/conversations/${user?.userId}`)
     const data = await res.json()
     if (res.ok) setConversations(data.conversations)
   }
 
   const fetchFriends = async () => {
-    const res = await fetch(`http://localhost:4000/users/friends/${user?.userId}`)
+    const res = await fetch(`https://social-hub-sqid.onrender.com/api/users/friends/${user?.userId}`)
     const data = await res.json()
     if (res.ok) setFriends(data.friends || [])
   }
 
   const fetchMessages = async (id) => {
-    const res = await fetch(`http://localhost:4000/messages/chat/${user?.userId}/${id}`)
+    const res = await fetch(`https://social-hub-sqid.onrender.com/api/messages/chat/${user?.userId}/${id}`)
     const data = await res.json()
     if (res.ok) setMessages(data.messages)
   }
@@ -82,7 +82,7 @@ export default function Messages() {
       message: messageText
     })
 
-    await fetch('http://localhost:4000/messages/send', {
+    await fetch('https://social-hub-sqid.onrender.com/api/messages/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
