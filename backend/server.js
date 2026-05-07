@@ -18,7 +18,10 @@ import dashboardRouter from "./routers/dashboardRouter.js"
   const httpServer = createServer(app)
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5174',
+      origin: [
+        'http://localhost:5174',
+        'https://socialhub-erzi.onrender.com'
+      ],
       credentials: true
     }
   })
@@ -75,7 +78,10 @@ import dashboardRouter from "./routers/dashboardRouter.js"
   })
 
   app.use(cors({
-    origin: 'http://localhost:5174',
+    origin: [
+      'http://localhost:5174',
+      'https://socialhub-erzi.onrender.com'
+    ],
     credentials: true
   }))
   app.use(cookieParser())
