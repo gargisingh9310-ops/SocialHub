@@ -24,7 +24,7 @@ export default function Messages() {
 
   useEffect(() => {
 
-    socket = io('https://socialhub-rdc3.onrender.com', {
+    socket = io('https://socialhub-backend-8c96.onrender.com', {
       withCredentials: true
     })
 
@@ -76,7 +76,7 @@ export default function Messages() {
     try {
 
       const res = await fetch(
-        `https://socialhub-rdc3.onrender.com/messages/conversations/${user?.userId}`,
+        `https://socialhub-backend-8c96.onrender.com/messages/conversations/${user?.userId}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -102,7 +102,7 @@ export default function Messages() {
     try {
 
       const res = await fetch(
-        `https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`,
+        `https://socialhub-backend-8c96.onrender.com/users/friends/${user?.userId}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -128,7 +128,7 @@ export default function Messages() {
     try {
 
       const res = await fetch(
-        `https://socialhub-rdc3.onrender.com/messages/chat/${user?.userId}/${id}`,
+        `https://socialhub-backend-8c96.onrender.com/messages/chat/${user?.userId}/${id}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -171,7 +171,7 @@ export default function Messages() {
     try {
 
       await fetch(
-        'https://socialhub-rdc3.onrender.com/messages/send',
+        'https://socialhub-backend-8c96.onrender.com/messages/send',
         {
           method: 'POST',
           credentials: 'include',

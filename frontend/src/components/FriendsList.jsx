@@ -21,7 +21,7 @@ export default function FriendsList() {
     try {
 
       const res = await fetch(
-        `https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`,
+        `https://socialhub-backend-8c96.onrender.com/users/friends/${user?.userId}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -51,7 +51,7 @@ export default function FriendsList() {
     try {
 
       const res = await fetch(
-        'https://socialhub-rdc3.onrender.com/users/remove-friend',
+        'https://socialhub-backend-8c96.onrender.com/users/remove-friend',
         {
           method: 'POST',
           credentials: 'include',

@@ -18,7 +18,7 @@ export default function Feed() {
 
   const fetchFeed = async () => {
     try {
-      const res = await fetch(`https://socialhub-rdc3.onrender.com/posts/feed/${user?.userId}`)
+      const res = await fetch(`https://socialhub-backend-8c96.onrender.com/posts/feed/${user?.userId}`)
       const data = await res.json()
       if (res.ok) {
         setPosts(data.posts)
@@ -32,7 +32,7 @@ export default function Feed() {
 
   const handleLike = async (postId) => {
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/posts/like', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: user?.userId })
@@ -48,7 +48,7 @@ export default function Feed() {
 
   const handleComment = async (postId, text) => {
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/posts/comment', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/comment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,7 +69,7 @@ export default function Feed() {
 
   const handleDelete = async (postId) => {
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/posts/delete', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: user?.userId })

@@ -21,7 +21,7 @@ export default function Profile() {
     try {
 
       const res = await fetch(
-        `https://socialhub-rdc3.onrender.com/users/profile/${user?.userId}`,
+        `https://socialhub-backend-8c96.onrender.com/users/profile/${user?.userId}`,
         {
           method: 'GET',
           credentials: 'include',

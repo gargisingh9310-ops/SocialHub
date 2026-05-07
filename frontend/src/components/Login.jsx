@@ -22,7 +22,7 @@ export default function Login() {
     setError('')
 
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/users/login', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/login', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

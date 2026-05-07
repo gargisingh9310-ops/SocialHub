@@ -28,7 +28,7 @@ export default function VerifyOtp() {
     setError('')
 
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/users/verify-otp', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/verify-otp', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ export default function VerifyOtp() {
 
   const handleResend = async () => {
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/users/resend-otp', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/resend-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })

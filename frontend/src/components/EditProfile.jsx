@@ -32,7 +32,7 @@ export default function EditProfile() {
     setSuccess('')
 
     try {
-      const res = await fetch('https://socialhub-rdc3.onrender.com/users/update-profile', {
+      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/update-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
