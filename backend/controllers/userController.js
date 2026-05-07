@@ -134,6 +134,48 @@ else{
 }
  }
 
+ export async function resendOtp(req, res) {
+  try {
+    const { userId } = req.body
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "userId required"
+      })
+    }
+
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found"
+      })
+    }
+
+    const otp = otpgenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false
+    })
+
+    user.otp = otp
+    user.otpExpires = new Date(Date.now() + 10 * 60 * 1000)
+
+    await user.save()
+
+    await sendOTP(user.email, otp)
+
+    return res.status(200).json({
+      message: "OTP resent successfully"
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "something went wrong"
+    })
+  }
+}
+
  export async function updateProfile(req, res) {
   try {
     const { userId, bio, profilePicture } = req.body

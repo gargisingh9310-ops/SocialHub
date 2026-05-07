@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { login, register, verifyOtp, updateProfile, getProfile, searchFriends, addFriend, removeFriend, getFriends, followUser, unfollowUser, getStats } from "../controllers/userController.js";
+import { login, register, verifyOtp, updateProfile, getProfile, searchFriends, addFriend, removeFriend, getFriends, followUser, unfollowUser, getStats, resendOtp } from "../controllers/userController.js";
 
 const userRouter = Router()
 
 userRouter.post("/register", register)
 userRouter.post("/verify-otp", verifyOtp)
+userRouter.post("/resend-otp", resendOtp)
 userRouter.post("/login", login)
 userRouter.post("/update-profile", updateProfile)
 userRouter.get("/profile/:userId", getProfile)
