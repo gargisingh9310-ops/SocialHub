@@ -23,7 +23,7 @@ const io = new Server(httpServer, {
     origin: [
       "http://localhost:5174",
       "http://localhost:5173",
-      "https://socialhub-erzi.onrender.com"
+      "https://socialhub-851b.onrender.com"
     ],
     credentials: true
   }
@@ -97,7 +97,7 @@ app.use(cors({
   origin: [
     "http://localhost:5174",
     "http://localhost:5173",
-    "https://socialhub-erzi.onrender.com"
+    "https://socialhub-851b.onrender.com"
   ],
   credentials: true
 }))
