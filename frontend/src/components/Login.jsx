@@ -24,6 +24,7 @@ export default function Login() {
     try {
       const res = await fetch('https://socialhub-rdc3.onrender.com/users/login', {
         method: 'POST',
+        credentials: 'true',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       })
