@@ -482,7 +482,7 @@ export async function login(req, res) {
        .cookie('token', token, { 
          httpOnly: true,
          secure: true,
-         sameSite: 'strict'
+         sameSite: 'none'
        })
        .json({
          message: "login successful",

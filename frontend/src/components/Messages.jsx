@@ -7,6 +7,7 @@ import '../stylesheet/Message.css'
 let socket
 
 export default function Messages() {
+
   const user = useSelector(state => state.user)
 
   const [conversations, setConversations] = useState([])
@@ -22,56 +23,141 @@ export default function Messages() {
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
-    socket = io('https://socialhub-rdc3.onrender.com')
+
+    socket = io('https://socialhub-rdc3.onrender.com', {
+      withCredentials: true
+    })
+
     socket.emit('user_connected', user?.userId)
 
-    socket.on('online_users', setOnlineUsers)
+    socket.on('online_users', (users) => {
+      setOnlineUsers(users)
+    })
 
     socket.on('receive_message', (data) => {
-      if (selectedUser && data.senderId === selectedUser.userId) {
+
+      if (
+        selectedUser &&
+        data.senderId === (selectedUser._id || selectedUser.userId)
+      ) {
         setMessages(prev => [...prev, data])
       }
+
       fetchConversations()
     })
 
-    socket.on('user_typing', () => setIsTyping(true))
-    socket.on('user_stop_typing', () => setIsTyping(false))
+    socket.on('user_typing', () => {
+      setIsTyping(true)
+    })
+
+    socket.on('user_stop_typing', () => {
+      setIsTyping(false)
+    })
 
     fetchConversations()
     fetchFriends()
+
     setLoading(false)
 
-    return () => socket.disconnect()
+    return () => {
+      socket.disconnect()
+    }
+
   }, [user?.userId])
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current?.scrollIntoView({
+      behavior: 'smooth'
+    })
   }, [messages])
 
   const fetchConversations = async () => {
-    const res = await fetch(`https://socialhub-rdc3.onrender.com/messages/conversations/${user?.userId}`)
-    const data = await res.json()
-    if (res.ok) setConversations(data.conversations)
+
+    try {
+
+      const res = await fetch(
+        `https://socialhub-rdc3.onrender.com/messages/conversations/${user?.userId}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setConversations(data.conversations)
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const fetchFriends = async () => {
-    const res = await fetch(`https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`)
-    const data = await res.json()
-    if (res.ok) setFriends(data.friends || [])
+
+    try {
+
+      const res = await fetch(
+        `https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setFriends(data.friends || [])
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const fetchMessages = async (id) => {
-    const res = await fetch(`https://socialhub-rdc3.onrender.com/messages/chat/${user?.userId}/${id}`)
-    const data = await res.json()
-    if (res.ok) setMessages(data.messages)
+
+    try {
+
+      const res = await fetch(
+        `https://socialhub-rdc3.onrender.com/messages/chat/${user?.userId}/${id}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setMessages(data.messages)
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const handleSelectUser = (u) => {
+
     setSelectedUser(u)
+
     fetchMessages(u._id || u.userId)
   }
 
   const handleSendMessage = async () => {
+
     if (!messageText.trim() || !selectedUser) return
 
     const id = selectedUser._id || selectedUser.userId
@@ -82,110 +168,189 @@ export default function Messages() {
       message: messageText
     })
 
-    await fetch('https://socialhub-rdc3.onrender.com/messages/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        senderId: user?.userId,
-        senderName: user?.userName,
-        receiverId: id,
-        receiverName: selectedUser.userName,
-        message: messageText
-      })
-    })
+    try {
 
-    setMessages(prev => [...prev, {
-      senderId: user?.userId,
-      message: messageText,
-      createdAt: new Date()
-    }])
+      await fetch(
+        'https://socialhub-rdc3.onrender.com/messages/send',
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            senderId: user?.userId,
+            senderName: user?.userName,
+            receiverId: id,
+            receiverName: selectedUser.userName,
+            message: messageText
+          })
+        }
+      )
 
-    setMessageText('')
+      setMessages(prev => [
+        ...prev,
+        {
+          senderId: user?.userId,
+          message: messageText,
+          createdAt: new Date()
+        }
+      ])
+
+      setMessageText('')
+
+    } catch (err) {
+      console.log(err)
+    }
   }
 
-  const isOnline = onlineUsers.includes(selectedUser?._id || selectedUser?.userId)
+  const isOnline = onlineUsers.includes(
+    selectedUser?._id || selectedUser?.userId
+  )
+
+  if (loading) {
+    return (
+      <div className="messages-container">
+        <p>Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="messages-container">
 
-      {/* LEFT */}
+      {/* LEFT SIDEBAR */}
       <div className="sidebar-chat">
 
         <div className="chat-tabs">
+
           <button
             className={activeTab === 'conversations' ? 'active' : ''}
             onClick={() => setActiveTab('conversations')}
           >
-            <MessageCircle size={16}/> Chats
+            <MessageCircle size={16} />
+            Chats
           </button>
 
           <button
             className={activeTab === 'friends' ? 'active' : ''}
             onClick={() => setActiveTab('friends')}
           >
-            <Users size={16}/> Friends
+            <Users size={16} />
+            Friends
           </button>
+
         </div>
 
-        {(activeTab === 'conversations' ? conversations : friends).map(item => {
+        {(activeTab === 'conversations'
+          ? conversations
+          : friends
+        ).map(item => {
+
           const id = item.userId || item._id
+
           const online = onlineUsers.includes(id)
 
           return (
+
             <div
               key={id}
-              className={`chat-user ${selectedUser?.userId === id ? 'active' : ''}`}
+              className={`chat-user ${
+                (selectedUser?._id || selectedUser?.userId) === id
+                  ? 'active'
+                  : ''
+              }`}
               onClick={() => handleSelectUser(item)}
             >
+
               <div className="avatar-small">
                 {item.userName?.charAt(0).toUpperCase()}
               </div>
 
               <div className="chat-user-info">
+
                 <p>{item.userName}</p>
-                <span className={online ? 'online' : 'offline'} />
+
+                <span
+                  className={online ? 'online' : 'offline'}
+                />
+
               </div>
+
             </div>
           )
         })}
       </div>
 
-      {/* RIGHT */}
+      {/* RIGHT CHAT AREA */}
       <div className="chat-area">
+
         {!selectedUser ? (
+
           <div className="no-chat">
-            <MessageCircle size={40}/>
+
+            <MessageCircle size={40} />
+
             <p>Select a chat to start messaging</p>
+
           </div>
+
         ) : (
+
           <>
+
             <div className="chat-header">
+
               <h3>{selectedUser.userName}</h3>
-              <span className={isOnline ? 'online' : 'offline'} />
+
+              <span
+                className={isOnline ? 'online' : 'offline'}
+              />
+
             </div>
 
             <div className="messages-list">
+
               {messages.map((msg, i) => (
-                <div key={i} className={`msg ${msg.senderId === user?.userId ? 'sent' : 'received'}`}>
+
+                <div
+                  key={i}
+                  className={`msg ${
+                    msg.senderId === user?.userId
+                      ? 'sent'
+                      : 'received'
+                  }`}
+                >
                   {msg.message}
                 </div>
+
               ))}
 
-              {isTyping && <div className="typing">typing...</div>}
+              {isTyping && (
+                <div className="typing">
+                  typing...
+                </div>
+              )}
+
               <div ref={messagesEndRef} />
+
             </div>
 
             <div className="chat-input">
+
               <input
+                type="text"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 placeholder="Type message..."
               />
 
               <button onClick={handleSendMessage}>
-                <Send size={18}/>
+                <Send size={18} />
               </button>
+
             </div>
+
           </>
         )}
       </div>

@@ -66,6 +66,7 @@ export default function Register() {
     try {
       const res = await fetch('https://socialhub-rdc3.onrender.com/users/register', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       })

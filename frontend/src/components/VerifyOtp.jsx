@@ -30,6 +30,7 @@ export default function VerifyOtp() {
     try {
       const res = await fetch('https://socialhub-rdc3.onrender.com/users/verify-otp', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, otp })
       })

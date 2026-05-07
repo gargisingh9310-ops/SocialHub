@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import '../stylesheet/Friends.css'
 
 export default function FriendsList() {
+
   const user = useSelector(state => state.user)
   const navigate = useNavigate()
+
   const [friends, setFriends] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -15,8 +17,20 @@ export default function FriendsList() {
   }, [])
 
   const fetchFriends = async () => {
+
     try {
-      const res = await fetch(`https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`)
+
+      const res = await fetch(
+        `https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
       const data = await res.json()
 
       if (res.ok) {
@@ -24,6 +38,7 @@ export default function FriendsList() {
       } else {
         setError(data.message)
       }
+
     } catch (err) {
       setError('Failed to load friends')
     } finally {
@@ -32,81 +47,165 @@ export default function FriendsList() {
   }
 
   const handleRemoveFriend = async (friendId) => {
+
     try {
-      const res = await fetch('/users/remove-friend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.userId, friendId })
-      })
+
+      const res = await fetch(
+        'https://socialhub-rdc3.onrender.com/users/remove-friend',
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: user?.userId,
+            friendId
+          })
+        }
+      )
+
+      const data = await res.json()
 
       if (res.ok) {
-        setFriends(friends.filter(f => f._id !== friendId))
-        alert('Friend removed!')
+
+        setFriends(
+          friends.filter(friend => friend._id !== friendId)
+        )
+
+        alert('Friend removed successfully')
+
       } else {
-        alert('Error removing friend')
+        alert(data.message)
       }
+
     } catch (err) {
       alert('Error removing friend')
     }
   }
 
   if (loading) {
-    return <div className="friends-container"><p>Loading...</p></div>
+    return (
+      <div className="friends-container">
+        <p>Loading...</p>
+      </div>
+    )
   }
 
   return (
     <div className="friends-container">
+
       <div className="friends-box">
+
+        {/* HEADER */}
         <div className="friends-header">
-          <h2>My Friends ({friends.length})</h2>
-          <button onClick={() => navigate('/search-friends')} className="search-btn">
+
+          <h2>
+            My Friends ({friends.length})
+          </h2>
+
+          <button
+            onClick={() => navigate('/search-friends')}
+            className="search-btn"
+          >
             Search Friends
           </button>
+
         </div>
 
-        {error && <p className="error">{error}</p>}
+        {/* ERROR */}
+        {error && (
+          <p className="error">
+            {error}
+          </p>
+        )}
 
+        {/* NO FRIENDS */}
         {friends.length === 0 ? (
+
           <div className="no-friends">
+
             <p>You have no friends yet</p>
-            <button onClick={() => navigate('/search-friends')} className="btn-add-first">
+
+            <button
+              onClick={() => navigate('/search-friends')}
+              className="btn-add-first"
+            >
               Add Your First Friend
             </button>
+
           </div>
+
         ) : (
+
           <div className="friends-grid">
+
             {friends.map((friend) => (
-              <div key={friend._id} className="friend-card">
+
+              <div
+                key={friend._id}
+                className="friend-card"
+              >
+
+                {/* AVATAR */}
                 <div className="friend-avatar">
+
                   {friend.profilePicture ? (
-                    <img src={friend.profilePicture} alt={friend.userName} />
+
+                    <img
+                      src={friend.profilePicture}
+                      alt={friend.userName}
+                    />
+
                   ) : (
+
                     <div className="avatar-placeholder">
                       {friend.firstName?.charAt(0).toUpperCase()}
                     </div>
+
                   )}
+
                 </div>
 
+                {/* INFO */}
                 <div className="friend-info">
-                  <h3>{friend.firstName} {friend.lastName}</h3>
-                  <p>@{friend.userName}</p>
+
+                  <h3>
+                    {friend.firstName} {friend.lastName}
+                  </h3>
+
+                  <p>
+                    @{friend.userName}
+                  </p>
+
                 </div>
 
+                {/* REMOVE BUTTON */}
                 <button
                   onClick={() => handleRemoveFriend(friend._id)}
                   className="btn-remove"
                 >
                   Remove
                 </button>
+
               </div>
+
             ))}
+
           </div>
+
         )}
 
-        <button onClick={() => navigate('/dashboard')} className="back-btn">
+        {/* BACK BUTTON */}
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="back-btn"
+        >
           Back to Dashboard
         </button>
+
       </div>
+
     </div>
   )
 }
