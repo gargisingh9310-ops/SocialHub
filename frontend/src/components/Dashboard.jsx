@@ -22,7 +22,7 @@ export default function Dashboard() {
     const fetchStats = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:4000/api/dashboard/stats/${user._id}`
+          `https://socialhub-rdc3.onrender.com/api/dashboard/stats/${user._id}`
         )
 
         dispatch({

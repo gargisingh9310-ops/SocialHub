@@ -16,7 +16,7 @@ export default function FriendsList() {
 
   const fetchFriends = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/users/friends/${user?.userId}`)
+      const res = await fetch(`https://socialhub-rdc3.onrender.com/users/friends/${user?.userId}`)
       const data = await res.json()
 
       if (res.ok) {
