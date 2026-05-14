@@ -3,23 +3,36 @@ import { useSelector } from 'react-redux'
 import '../stylesheet/Notifications.css'
 
 export default function Notifications() {
+
   const user = useSelector(state => state.user)
+
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
   const [unreadCount, setUnreadCount] = useState(0)
 
-  useEffect(() => {
-    fetchNotifications()
-    fetchUnreadCount()
-  }, [])
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
 
+  useEffect(() => {
+    if (user?.userId) {
+      fetchNotifications()
+      fetchUnreadCount()
+    }
+  }, [user])
+
+  // GET NOTIFICATIONS
   const fetchNotifications = async () => {
     try {
-      const res = await fetch(`https://socialhub-backend-8c96.onrender.com/notifications/${user?.userId}`)
+      const res = await fetch(`${API}/notifications/${user?.userId}`)
       const data = await res.json()
-      if (res.ok) {
-        setNotifications(data.notifications)
+
+      if (!res.ok) {
+        console.log(data.message || 'Error fetching notifications')
+        return
       }
+
+      setNotifications(data.notifications || [])
+
     } catch (err) {
       console.log('Error fetching notifications')
     } finally {
@@ -27,21 +40,25 @@ export default function Notifications() {
     }
   }
 
+  // GET UNREAD COUNT
   const fetchUnreadCount = async () => {
     try {
-      const res = await fetch(`https://socialhub-backend-8c96.onrender.com/notifications/unread/${user?.userId}`)
+      const res = await fetch(`${API}/notifications/unread/${user?.userId}`)
       const data = await res.json()
+
       if (res.ok) {
-        setUnreadCount(data.unreadCount)
+        setUnreadCount(data.unreadCount || 0)
       }
+
     } catch (err) {
       console.log('Error fetching unread count')
     }
   }
 
+  // MARK AS READ
   const handleMarkAsRead = async (notificationId) => {
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/notifications/mark-read', {
+      const res = await fetch(`${API}/notifications/mark-read`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationId })
@@ -51,27 +68,33 @@ export default function Notifications() {
         fetchNotifications()
         fetchUnreadCount()
       }
+
     } catch (err) {
       console.log('Error marking as read')
     }
   }
 
+  // DELETE NOTIFICATION
   const handleDelete = async (notificationId) => {
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/notifications/delete', {
+      const res = await fetch(`${API}/notifications/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationId })
       })
 
       if (res.ok) {
-        setNotifications(notifications.filter(n => n._id !== notificationId))
+        setNotifications(prev =>
+          prev.filter(n => n._id !== notificationId)
+        )
       }
+
     } catch (err) {
       console.log('Error deleting notification')
     }
   }
 
+  // ICONS
   const getNotificationIcon = (type) => {
     const icons = {
       like: '❤️',
@@ -84,13 +107,19 @@ export default function Notifications() {
 
   return (
     <div className="notifications-container">
+
+      {/* HEADER */}
       <div className="notifications-header">
         <h2>Notifications</h2>
+
         {unreadCount > 0 && (
-          <span className="unread-badge">{unreadCount}</span>
+          <span className="unread-badge">
+            {unreadCount}
+          </span>
         )}
       </div>
 
+      {/* LOADING */}
       {loading ? (
         <p>Loading notifications...</p>
       ) : notifications.length === 0 ? (
@@ -98,44 +127,68 @@ export default function Notifications() {
           <p>No notifications yet</p>
         </div>
       ) : (
+
         <div className="notifications-list">
+
           {notifications.map(notification => (
             <div
               key={notification._id}
-              className={`notification-item ${!notification.isRead ? 'unread' : ''}`}
+              className={`notification-item ${
+                !notification.isRead ? 'unread' : ''
+              }`}
             >
+
+              {/* CONTENT */}
               <div className="notification-content">
+
                 <span className="notification-icon">
                   {getNotificationIcon(notification.type)}
                 </span>
+
                 <div className="notification-text">
-                  <p className="notification-message">{notification.message}</p>
+                  <p className="notification-message">
+                    {notification.message}
+                  </p>
+
                   <small>
                     {new Date(notification.createdAt).toLocaleDateString()}
                   </small>
                 </div>
+
               </div>
 
+              {/* ACTIONS */}
               <div className="notification-actions">
+
                 {!notification.isRead && (
                   <button
-                    onClick={() => handleMarkAsRead(notification._id)}
+                    onClick={() =>
+                      handleMarkAsRead(notification._id)
+                    }
                     className="mark-read-btn"
                   >
                     ✓
                   </button>
                 )}
+
                 <button
-                  onClick={() => handleDelete(notification._id)}
+                  onClick={() =>
+                    handleDelete(notification._id)
+                  }
                   className="delete-btn"
                 >
                   ✕
                 </button>
+
               </div>
+
             </div>
           ))}
+
         </div>
+
       )}
+
     </div>
   )
 }

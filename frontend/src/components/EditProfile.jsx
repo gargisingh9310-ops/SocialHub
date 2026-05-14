@@ -1,18 +1,22 @@
-
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Upload, User, Image as ImageIcon } from 'lucide-react'
+import { Upload, User } from 'lucide-react'
 import '../stylesheet/Profile.css'
 
 export default function EditProfile() {
   const user = useSelector(state => state.user)
   const navigate = useNavigate()
+
   const [bio, setBio] = useState(user?.bio || '')
   const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '')
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
@@ -32,7 +36,7 @@ export default function EditProfile() {
     setSuccess('')
 
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/update-profile', {
+      const res = await fetch(`${API}/users/update-profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -45,12 +49,14 @@ export default function EditProfile() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.message)
+        setError(data.message || 'Update failed')
         return
       }
 
       setSuccess('Profile updated successfully!')
+
       setTimeout(() => navigate('/profile'), 1500)
+
     } catch (err) {
       setError('Something went wrong')
     } finally {
@@ -64,7 +70,10 @@ export default function EditProfile() {
         <h2>Edit Profile</h2>
 
         <form onSubmit={handleSubmit}>
+
+          {/* PROFILE IMAGE */}
           <div className="profile-picture-section">
+
             <div className="profile-picture-preview">
               {profilePicture ? (
                 <img src={profilePicture} alt="Profile" />
@@ -88,6 +97,7 @@ export default function EditProfile() {
             <p className="file-info">JPG, PNG max 2MB</p>
           </div>
 
+          {/* BIO */}
           <div className="form-group">
             <label>Bio</label>
             <textarea
@@ -100,20 +110,27 @@ export default function EditProfile() {
             <p className="char-count">{bio.length}/500</p>
           </div>
 
+          {/* ERROR / SUCCESS */}
           {error && <p className="error">{error}</p>}
           {success && <p className="success">{success}</p>}
 
+          {/* BUTTONS */}
           <div className="button-group">
             <button type="submit" disabled={loading} className="btn">
               {loading ? 'Saving...' : 'Save Profile'}
             </button>
-            <button type="button" onClick={() => navigate('/profile')} className="btn-cancel">
+
+            <button
+              type="button"
+              onClick={() => navigate('/profile')}
+              className="btn-cancel"
+            >
               Cancel
             </button>
           </div>
+
         </form>
       </div>
     </div>
   )
 }
-

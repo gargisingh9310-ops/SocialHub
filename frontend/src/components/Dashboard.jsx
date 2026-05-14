@@ -13,16 +13,17 @@ export default function Dashboard() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  // ✅ Redux se data
   const user = useSelector(state => state.user)
   const stats = useSelector(state => state.stats)
 
-  // ✅ API call
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(
-          `https://socialhub-backend-8c96.onrender.com/api/dashboard/stats/${user._id}`
+          `${API}/api/dashboard/stats/${user._id}`
         )
 
         dispatch({
@@ -40,7 +41,7 @@ export default function Dashboard() {
     }
 
     if (user?._id) fetchStats()
-  }, [user, dispatch])
+  }, [user, dispatch, API])
 
   return (
     <div className="dashboard-layout">
@@ -54,6 +55,7 @@ export default function Dashboard() {
           {/* Welcome */}
           <div className="welcome-section">
             <div className="welcome-card">
+
               <div className="welcome-header">
                 <h2>Welcome back, {user?.userName}!</h2>
                 <p>You are logged in successfully</p>
@@ -66,7 +68,7 @@ export default function Dashboard() {
                   <Users size={22} />
                   <div className="stat-info">
                     <p className="stat-label">Friends</p>
-                    <p className="stat-value">{stats?.friends}</p>
+                    <p className="stat-value">{stats?.friends || 0}</p>
                   </div>
                 </div>
 
@@ -74,7 +76,7 @@ export default function Dashboard() {
                   <Star size={22} />
                   <div className="stat-info">
                     <p className="stat-label">Profile Views</p>
-                    <p className="stat-value">{stats?.views}</p>
+                    <p className="stat-value">{stats?.views || 0}</p>
                   </div>
                 </div>
 
@@ -82,7 +84,7 @@ export default function Dashboard() {
                   <MessageCircle size={22} />
                   <div className="stat-info">
                     <p className="stat-label">Messages</p>
-                    <p className="stat-value">{stats?.messages}</p>
+                    <p className="stat-value">{stats?.messages || 0}</p>
                   </div>
                 </div>
 
@@ -94,21 +96,21 @@ export default function Dashboard() {
 
                 <div className="action-buttons">
 
-                  <button 
+                  <button
                     className="action-btn"
                     onClick={() => navigate('/feed')}
                   >
                     <PenSquare size={18} /> Create Post
                   </button>
 
-                  <button 
+                  <button
                     className="action-btn"
                     onClick={() => navigate('/search-friends')}
                   >
                     <Search size={18} /> Find Friends
                   </button>
 
-                  <button 
+                  <button
                     className="action-btn"
                     onClick={() => navigate('/edit-profile')}
                   >

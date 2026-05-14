@@ -16,6 +16,9 @@ export default function CreatePost({ onPostCreate }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
+
   // IMAGE
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
@@ -47,7 +50,7 @@ export default function CreatePost({ onPostCreate }) {
         .map(tag => tag.trim().replace('#', ''))
         .filter(tag => tag)
 
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/create', {
+      const res = await fetch(`${API}/posts/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -60,17 +63,23 @@ export default function CreatePost({ onPostCreate }) {
         })
       })
 
-      if (res.ok) {
-        setContent('')
-        setImage('')
-        setHashtags('')
-        setLocation('')
-        setShowEmoji(false)
-        onPostCreate()
-      } else {
-        setError('Failed to create post')
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.message || 'Failed to create post')
+        return
       }
-    } catch {
+
+      // reset
+      setContent('')
+      setImage('')
+      setHashtags('')
+      setLocation('')
+      setShowEmoji(false)
+
+      onPostCreate()
+
+    } catch (err) {
       setError('Something went wrong')
     } finally {
       setLoading(false)
@@ -99,17 +108,17 @@ export default function CreatePost({ onPostCreate }) {
       {/* IMAGE PREVIEW */}
       {image && (
         <div className="image-preview">
-          <img src={image} />
+          <img src={image} alt="preview" />
           <button onClick={() => setImage('')}>
-            <X size={16} color='#fff'/>
+            <X size={16} color='#fff' />
           </button>
         </div>
       )}
 
-      {/* LOCATION INPUT */}
+      {/* LOCATION */}
       {location && (
         <div className="location-preview">
-          <MapPin size={14} color='#fff'/> {location}
+          <MapPin size={14} color='#fff' /> {location}
         </div>
       )}
 
@@ -125,7 +134,7 @@ export default function CreatePost({ onPostCreate }) {
       {/* EMOJI PICKER */}
       {showEmoji && (
         <div className="emoji-box">
-          <EmojiPicker onEmojiClick={handleEmojiClick}/>
+          <EmojiPicker onEmojiClick={handleEmojiClick} />
         </div>
       )}
 
@@ -135,25 +144,25 @@ export default function CreatePost({ onPostCreate }) {
         <div className="post-tools">
 
           <label className="tool-btn">
-            <Image size={18} color='#fff'/>
-            <input type="file" hidden onChange={handleImageUpload}/>
+            <Image size={18} color='#fff' />
+            <input type="file" hidden onChange={handleImageUpload} />
           </label>
 
-          <button 
+          <button
             className="tool-btn"
             onClick={() => setShowEmoji(!showEmoji)}
           >
-            <Smile size={18} color='#fff'/>
+            <Smile size={18} color='#fff' />
           </button>
 
-          <button 
+          <button
             className="tool-btn"
             onClick={() => {
               const loc = prompt('Enter location')
               if (loc) setLocation(loc)
             }}
           >
-            <MapPin size={18} color='#fff'/>
+            <MapPin size={18} color='#fff' />
           </button>
 
         </div>

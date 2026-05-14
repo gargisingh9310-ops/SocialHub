@@ -5,30 +5,39 @@ import { login } from '../redux/authActions'
 import '../stylesheet/VerifyOtp.css'
 
 export default function VerifyOtp() {
+
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
   const { userId, email } = useLocation().state || {}
+
+  // ✅ ENV API
+  const API = import.meta.env.VITE_API_URL
 
   if (!userId) {
     return (
       <div className="auth-container">
         <div className="auth-box">
-          <p className="error">Invalid access. Please register first.</p>
+          <p className="error">
+            Invalid access. Please register first.
+          </p>
         </div>
       </div>
     )
   }
 
+  // VERIFY OTP
   const handleVerify = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/verify-otp', {
+      const res = await fetch(`${API}/users/verify-otp`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -36,15 +45,21 @@ export default function VerifyOtp() {
       })
 
       const data = await res.json()
-      
+
       if (!res.ok) {
-        setError(data.message)
+        setError(data.message || 'OTP verification failed')
         return
       }
 
-      // Login with token
-      dispatch(login(data.token, { userId: data.userId, userName: data.userName }))
+      dispatch(
+        login(data.token, {
+          userId: data.userId,
+          userName: data.userName
+        })
+      )
+
       navigate('/dashboard')
+
     } catch (err) {
       setError('Something went wrong')
     } finally {
@@ -52,20 +67,23 @@ export default function VerifyOtp() {
     }
   }
 
+  // RESEND OTP
   const handleResend = async () => {
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/resend-otp', {
+      const res = await fetch(`${API}/users/resend-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
       })
 
+      const data = await res.json()
+
       if (res.ok) {
         alert('OTP resent to your email')
       } else {
-        const data = await res.json()
-        setError(data.message)
+        setError(data.message || 'Failed to resend OTP')
       }
+
     } catch (err) {
       setError('Something went wrong')
     }
@@ -73,27 +91,45 @@ export default function VerifyOtp() {
 
   return (
     <div className="auth-container">
+
       <div className="auth-box">
+
         <h2>Verify OTP</h2>
-        <p className="info-text">Enter OTP sent to {email}</p>
+
+        <p className="info-text">
+          Enter OTP sent to {email}
+        </p>
+
+        {/* OTP FORM */}
         <form onSubmit={handleVerify}>
-          <input 
-            type="text" 
-            placeholder="Enter 6-digit OTP" 
-            value={otp} 
-            onChange={(e) => setOtp(e.target.value)} 
-            maxLength="6" 
-            required 
+
+          <input
+            type="text"
+            placeholder="Enter 6-digit OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            maxLength="6"
+            required
           />
+
           {error && <p className="error">{error}</p>}
+
           <button type="submit" disabled={loading}>
             {loading ? 'Verifying...' : 'Verify'}
           </button>
+
         </form>
-        <button onClick={handleResend} className="btn-secondary">
+
+        {/* RESEND */}
+        <button
+          onClick={handleResend}
+          className="btn-secondary"
+        >
           Resend OTP
         </button>
+
       </div>
+
     </div>
   )
 }

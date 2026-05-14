@@ -1,4 +1,3 @@
-// ================= Feed.jsx =================
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import CreatePost from './CreatePost'
@@ -8,21 +7,33 @@ import '../stylesheet/Feed.css'
 
 export default function Feed() {
   const user = useSelector(state => state.user)
+
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchFeed()
-  }, [])
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
 
+  useEffect(() => {
+    if (user?.userId) {
+      fetchFeed()
+    }
+  }, [user])
+
+  // FEED
   const fetchFeed = async () => {
     try {
-      const res = await fetch(`https://socialhub-backend-8c96.onrender.com/posts/feed/${user?.userId}`)
+      const res = await fetch(`${API}/posts/feed/${user?.userId}`)
       const data = await res.json()
-      if (res.ok) {
-        setPosts(data.posts)
+
+      if (!res.ok) {
+        setError(data.message || 'Failed to load feed')
+        return
       }
+
+      setPosts(data.posts || [])
+
     } catch (err) {
       setError('Failed to load feed')
     } finally {
@@ -30,25 +41,26 @@ export default function Feed() {
     }
   }
 
+  // LIKE
   const handleLike = async (postId) => {
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/like', {
+      const res = await fetch(`${API}/posts/like`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: user?.userId })
       })
 
-      if (res.ok) {
-        fetchFeed()
-      }
+      if (res.ok) fetchFeed()
+
     } catch (err) {
       console.log('Error liking post')
     }
   }
 
+  // COMMENT
   const handleComment = async (postId, text) => {
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/comment', {
+      const res = await fetch(`${API}/posts/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -59,17 +71,17 @@ export default function Feed() {
         })
       })
 
-      if (res.ok) {
-        fetchFeed()
-      }
+      if (res.ok) fetchFeed()
+
     } catch (err) {
       console.log('Error adding comment')
     }
   }
 
+  // DELETE
   const handleDelete = async (postId) => {
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/posts/delete', {
+      const res = await fetch(`${API}/posts/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId, userId: user?.userId })
@@ -78,6 +90,7 @@ export default function Feed() {
       if (res.ok) {
         setPosts(posts.filter(p => p._id !== postId))
       }
+
     } catch (err) {
       console.log('Error deleting post')
     }
@@ -85,6 +98,7 @@ export default function Feed() {
 
   return (
     <div className="feed">
+
       <CreatePost onPostCreate={fetchFeed} />
 
       {loading && (
@@ -118,8 +132,7 @@ export default function Feed() {
           />
         ))}
       </div>
+
     </div>
   )
 }
-
-

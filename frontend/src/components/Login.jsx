@@ -9,8 +9,12 @@ export default function Login() {
   const [form, setForm] = useState({ userName: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -22,7 +26,7 @@ export default function Login() {
     setError('')
 
     try {
-      const res = await fetch('https://socialhub-backend-8c96.onrender.com/users/login', {
+      const res = await fetch(`${API}/users/login`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -30,14 +34,21 @@ export default function Login() {
       })
 
       const data = await res.json()
-      
+
       if (!res.ok) {
-        setError(data.message)
+        setError(data.message || 'Login failed')
         return
       }
 
-      dispatch(loginAction(data.token, { userId: data.userId, userName: data.userName }))
+      dispatch(
+        loginAction(data.token, {
+          userId: data.userId,
+          userName: data.userName
+        })
+      )
+
       navigate('/dashboard')
+
     } catch (err) {
       setError('Something went wrong')
     } finally {

@@ -22,9 +22,12 @@ export default function Messages() {
 
   const messagesEndRef = useRef(null)
 
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
+
   useEffect(() => {
 
-    socket = io('https://socialhub-backend-8c96.onrender.com', {
+    socket = io(API, {
       withCredentials: true
     })
 
@@ -46,13 +49,8 @@ export default function Messages() {
       fetchConversations()
     })
 
-    socket.on('user_typing', () => {
-      setIsTyping(true)
-    })
-
-    socket.on('user_stop_typing', () => {
-      setIsTyping(false)
-    })
+    socket.on('user_typing', () => setIsTyping(true))
+    socket.on('user_stop_typing', () => setIsTyping(false))
 
     fetchConversations()
     fetchFriends()
@@ -66,30 +64,22 @@ export default function Messages() {
   }, [user?.userId])
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: 'smooth'
-    })
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // GET CONVERSATIONS
   const fetchConversations = async () => {
-
     try {
-
-      const res = await fetch(
-        `https://socialhub-backend-8c96.onrender.com/messages/conversations/${user?.userId}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+      const res = await fetch(`${API}/messages/conversations/${user?.userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
 
       const data = await res.json()
 
       if (res.ok) {
-        setConversations(data.conversations)
+        setConversations(data.conversations || [])
       }
 
     } catch (err) {
@@ -97,20 +87,14 @@ export default function Messages() {
     }
   }
 
+  // GET FRIENDS
   const fetchFriends = async () => {
-
     try {
-
-      const res = await fetch(
-        `https://socialhub-backend-8c96.onrender.com/users/friends/${user?.userId}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+      const res = await fetch(`${API}/users/friends/${user?.userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
 
       const data = await res.json()
 
@@ -123,25 +107,19 @@ export default function Messages() {
     }
   }
 
+  // GET MESSAGES
   const fetchMessages = async (id) => {
-
     try {
-
-      const res = await fetch(
-        `https://socialhub-backend-8c96.onrender.com/messages/chat/${user?.userId}/${id}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+      const res = await fetch(`${API}/messages/chat/${user?.userId}/${id}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
 
       const data = await res.json()
 
       if (res.ok) {
-        setMessages(data.messages)
+        setMessages(data.messages || [])
       }
 
     } catch (err) {
@@ -149,13 +127,13 @@ export default function Messages() {
     }
   }
 
+  // SELECT USER
   const handleSelectUser = (u) => {
-
     setSelectedUser(u)
-
     fetchMessages(u._id || u.userId)
   }
 
+  // SEND MESSAGE
   const handleSendMessage = async () => {
 
     if (!messageText.trim() || !selectedUser) return
@@ -169,24 +147,18 @@ export default function Messages() {
     })
 
     try {
-
-      await fetch(
-        'https://socialhub-backend-8c96.onrender.com/messages/send',
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            senderId: user?.userId,
-            senderName: user?.userName,
-            receiverId: id,
-            receiverName: selectedUser.userName,
-            message: messageText
-          })
-        }
-      )
+      await fetch(`${API}/messages/send`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderId: user?.userId,
+          senderName: user?.userName,
+          receiverId: id,
+          receiverName: selectedUser.userName,
+          message: messageText
+        })
+      })
 
       setMessages(prev => [
         ...prev,
@@ -242,17 +214,12 @@ export default function Messages() {
 
         </div>
 
-        {(activeTab === 'conversations'
-          ? conversations
-          : friends
-        ).map(item => {
+        {(activeTab === 'conversations' ? conversations : friends).map(item => {
 
           const id = item.userId || item._id
-
           const online = onlineUsers.includes(id)
 
           return (
-
             <div
               key={id}
               className={`chat-user ${
@@ -268,13 +235,8 @@ export default function Messages() {
               </div>
 
               <div className="chat-user-info">
-
                 <p>{item.userName}</p>
-
-                <span
-                  className={online ? 'online' : 'offline'}
-                />
-
+                <span className={online ? 'online' : 'offline'} />
               </div>
 
             </div>
@@ -286,51 +248,31 @@ export default function Messages() {
       <div className="chat-area">
 
         {!selectedUser ? (
-
           <div className="no-chat">
-
             <MessageCircle size={40} />
-
             <p>Select a chat to start messaging</p>
-
           </div>
-
         ) : (
-
           <>
-
             <div className="chat-header">
-
               <h3>{selectedUser.userName}</h3>
-
-              <span
-                className={isOnline ? 'online' : 'offline'}
-              />
-
+              <span className={isOnline ? 'online' : 'offline'} />
             </div>
 
             <div className="messages-list">
 
               {messages.map((msg, i) => (
-
                 <div
                   key={i}
                   className={`msg ${
-                    msg.senderId === user?.userId
-                      ? 'sent'
-                      : 'received'
+                    msg.senderId === user?.userId ? 'sent' : 'received'
                   }`}
                 >
                   {msg.message}
                 </div>
-
               ))}
 
-              {isTyping && (
-                <div className="typing">
-                  typing...
-                </div>
-              )}
+              {isTyping && <div className="typing">typing...</div>}
 
               <div ref={messagesEndRef} />
 
@@ -350,7 +292,6 @@ export default function Messages() {
               </button>
 
             </div>
-
           </>
         )}
       </div>

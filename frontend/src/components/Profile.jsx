@@ -13,31 +13,33 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // ✅ ENV API URL
+  const API = import.meta.env.VITE_API_URL
+
   useEffect(() => {
-    fetchProfile()
-  }, [])
+    if (user?.userId) {
+      fetchProfile()
+    }
+  }, [user])
 
   const fetchProfile = async () => {
     try {
-
-      const res = await fetch(
-        `https://socialhub-backend-8c96.onrender.com/users/profile/${user?.userId}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      const res = await fetch(`${API}/users/profile/${user?.userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
         }
-      )
+      })
 
       const data = await res.json()
 
-      if (res.ok) {
-        setProfile(data)
-      } else {
-        setError(data.message)
+      if (!res.ok) {
+        setError(data.message || 'Failed to load profile')
+        return
       }
+
+      setProfile(data || null)
 
     } catch (err) {
       setError('Failed to load profile')
@@ -46,6 +48,7 @@ export default function Profile() {
     }
   }
 
+  // LOADING UI
   if (loading) {
     return (
       <div className="profile-container">
@@ -54,6 +57,7 @@ export default function Profile() {
     )
   }
 
+  // ERROR UI
   if (error) {
     return (
       <div className="profile-container">
@@ -82,39 +86,32 @@ export default function Profile() {
 
         </div>
 
-        {/* PROFILE IMAGE */}
+        {/* AVATAR */}
         <div className="profile-avatar">
 
           {profile?.profilePicture ? (
-            <img
-              src={profile.profilePicture}
-              alt="profile"
-            />
+            <img src={profile.profilePicture} alt="profile" />
           ) : (
             <div className="avatar-placeholder">
-              {profile?.firstName?.charAt(0).toUpperCase()}
+              {profile?.firstName?.charAt(0)?.toUpperCase() || 'U'}
             </div>
           )}
 
         </div>
 
-        {/* PROFILE INFO */}
+        {/* INFO */}
         <div className="profile-info">
 
           <div className="info-card">
             <User size={16} />
-
             <div>
               <span>Name</span>
-              <p>
-                {profile?.firstName} {profile?.lastName}
-              </p>
+              <p>{profile?.firstName} {profile?.lastName}</p>
             </div>
           </div>
 
           <div className="info-card">
             <User size={16} />
-
             <div>
               <span>Username</span>
               <p>@{profile?.userName}</p>
@@ -123,7 +120,6 @@ export default function Profile() {
 
           <div className="info-card">
             <Mail size={16} />
-
             <div>
               <span>Email</span>
               <p>{profile?.email}</p>
@@ -132,7 +128,6 @@ export default function Profile() {
 
           <div className="info-card">
             <User size={16} />
-
             <div>
               <span>Bio</span>
               <p>{profile?.bio || 'No bio yet'}</p>
@@ -141,7 +136,7 @@ export default function Profile() {
 
         </div>
 
-        {/* BACK BUTTON */}
+        {/* BACK */}
         <button
           onClick={() => navigate('/dashboard')}
           className="back-btn"
