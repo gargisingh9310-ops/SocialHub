@@ -11,18 +11,20 @@ import notificationRouter from "./routers/notificationRouter.js"
 import cookieParser from "cookie-parser"
 import { verifyTransport } from "./services/otpservice.js"
 import dashboardRouter from "./routers/dashboardRouter.js"
- 
+
 dotenv.config()
 
 const app = e()
 
 const httpServer = createServer(app)
 
+// SOCKET IO
 const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:5174",
-      "http://localhost:5173"
+      "http://localhost:5173",
+      "https://social-hub-drab.vercel.app"
     ],
     credentials: true
   }
@@ -38,11 +40,13 @@ io.on("connection", (socket) => {
   })
 
   socket.on("send_message", (data) => {
+
     const { senderId, receiverId, message } = data
 
     const receiverSocketId = onlineUsers.get(receiverId)
 
     if (receiverSocketId) {
+
       io.to(receiverSocketId).emit("receive_message", {
         senderId,
         message,
@@ -52,11 +56,13 @@ io.on("connection", (socket) => {
   })
 
   socket.on("typing", (data) => {
+
     const { receiverId, senderName } = data
 
     const receiverSocketId = onlineUsers.get(receiverId)
 
     if (receiverSocketId) {
+
       io.to(receiverSocketId).emit("user_typing", {
         senderName
       })
@@ -64,11 +70,13 @@ io.on("connection", (socket) => {
   })
 
   socket.on("stop_typing", (data) => {
+
     const { receiverId } = data
 
     const receiverSocketId = onlineUsers.get(receiverId)
 
     if (receiverSocketId) {
+
       io.to(receiverSocketId).emit("user_stop_typing")
     }
   })
@@ -92,11 +100,12 @@ io.on("connection", (socket) => {
   })
 })
 
+// CORS
 app.use(cors({
   origin: [
     "http://localhost:5174",
     "http://localhost:5173",
-    "https://socialhub-851b.onrender.com"
+    "https://social-hub-drab.vercel.app"
   ],
   credentials: true
 }))
@@ -106,21 +115,25 @@ app.use(cookieParser())
 app.use(e.json({ limit: "50mb" }))
 app.use(e.urlencoded({ limit: "50mb", extended: true }))
 
-// Test Route
+// TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Backend running")
 })
 
+// ROUTES
 app.use("/users", userRouter)
 app.use("/posts", postRouter)
 app.use("/messages", messageRouter)
 app.use("/notifications", notificationRouter)
 app.use("/api/dashboard", dashboardRouter)
 
+// SOCKET ACCESS
 app.set("io", io)
 
+// SERVICES
 verifyTransport()
 
+// DB CONNECTION
 connectToDb()
 
 const PORT = process.env.PORT || 5000
