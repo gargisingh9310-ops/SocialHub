@@ -23,8 +23,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:5174",
-      "http://localhost:5173",
-      "https://social-hub-drab.vercel.app"
+      "http://localhost:5173"
     ],
     credentials: true
   }
@@ -104,8 +103,7 @@ io.on("connection", (socket) => {
 app.use(cors({
   origin: [
     "http://localhost:5174",
-    "http://localhost:5173",
-    "https://social-hub-drab.vercel.app"
+    "http://localhost:5173"
   ],
   credentials: true
 }))
