@@ -6,76 +6,86 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 dotenv.config()
 
-export  async function register(req,res){
-const {email,password,userName,lastName,firstName} = req.body
+// REGISTER CONTROLLER
 
-if(!email || !password || !firstName || !userName){
+export async function register(req,res){
+
+  const {email,password,userName,lastName,firstName} = req.body
+
+  if(!email || !password || !firstName || !userName){
+
     return res.status(400).json({
-        message:"incomplete information, please fill in all details "
+      message:"incomplete information, please fill in all details"
     })
-}
+  }
 
- //exists
+  try {
 
- let alreadyExists= await userModel.findOne({
-    $or:[{email}, {userName}]
- })
+    // CHECK EXISTING USER
+    let alreadyExists = await userModel.findOne({
+      $or:[{email}, {userName}]
+    })
 
+    if(alreadyExists){
 
-  if(alreadyExists){
-    return res.status(400).json({
+      return res.status(400).json({
         message:"your email is already in use!!"
+      })
+    }
+
+    // HASH PASSWORD
+    const hashedPassword = await bcrypt.hash(password,10)
+
+    // GENERATE OTP
+    const otp = otpgenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false
+    })
+
+    // CREATE USER
+    const user = new userModel({
+      email,
+      password: hashedPassword,
+      userName,
+      lastName,
+      firstName,
+      otp,
+      otpExpires: new Date(Date.now() + 10 * 60 * 1000),
+      isVerified: false
+    })
+
+    await user.save()
+
+    // SEND OTP
+    const otpResponse = await sendOTP(email, otp)
+
+    console.log("OTP RESPONSE:", otpResponse)
+
+    // OTP FAILED
+    if (!otpResponse.success) {
+
+      return res.status(500).json({
+        message:"OTP sending failed"
+      })
+    }
+
+    // SUCCESS
+    return res.status(201).json({
+      message:"otp sent successfully",
+      userId: user._id,
+      email: user.email
+    })
+
+  } catch (error) {
+
+    console.log("REGISTER ERROR:", error)
+
+    return res.status(500).json({
+      message:"registration failed"
     })
   }
-
- 
-try {
-     const hashedPassword= await bcrypt.hash(password,10)
-
-const otp=  otpgenerator.generate(6, {
-  lowerCaseAlphabets: false, 
-  upperCaseAlphabets: false, 
-  specialChars: false     
-})
-
-const user = new userModel({
-  email,
-  password: hashedPassword,
-  userName,
-  lastName,
-  firstName,
-  otp,    
-  otpExpires: new Date(Date.now() + 10*60*1000),
-  isVerified: false
-})
-
-await user.save()
-
-const isOTPsent = await sendOTP(email, otp)
-
-if(!isOTPsent){
-  return res.status(500).json({
-    message:"otp sent failed",
-    userId: user._id,
-    email: user.email
-  })
 }
-
-return res.status(201).json({
-  message:"otp sent successfully",
-  userId: user._id,
-  email: user.email
-})
- } catch (error) {
-    console.error("Registration error:", error)
-    return res.status(400).json({
-      message: error.message || "Registration failed"
-    })  
-  }
- 
- }
-
-
 
 export async function verifyOtp(req,res){
 try {
